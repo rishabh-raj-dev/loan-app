@@ -46,8 +46,9 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({navigation}) => {
         <View style={styles.timerSection}>
           <View style={styles.timerIcon} />
           <Text style={styles.timerText}>
-            Open your cashUp account in{' '}
-            <Text style={styles.boldText}>10 minutes</Text> and{' '}
+            <Text style={styles.mediumText}>Open your cashUp account in </Text>
+            <Text style={styles.boldText}>10 minutes </Text>
+            <Text style={styles.regularText}>and </Text>
             <Text style={styles.boldText}>5 easy steps</Text>
           </Text>
         </View>
@@ -87,9 +88,11 @@ const styles = StyleSheet.create({
   },
   logo: {
     color: '#FFFFFF',
-    fontSize: 28,
-    fontFamily: 'Gilroy-SemiBold',
+    fontSize: 24,
+    fontFamily: 'Gilroy-Bold',
     fontWeight: '400',
+    lineHeight: 30.72,
+    textAlign: 'left',
   },
   skipButton: {
     color: '#FFFFFF',
@@ -133,15 +136,32 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   timerText: {
-    color: '#FFFFFF',
-    fontSize: 20,
-    fontFamily: 'Gilroy-SemiBold',
-    fontWeight: '400',
     flex: 1,
-    lineHeight: 28,
+    lineHeight: 20.48,
+  },
+  mediumText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontFamily: 'Gilroy-Medium',
+    fontWeight: '400',
+    lineHeight: 20.48,
+    textAlign: 'left',
+  },
+  regularText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontFamily: 'Gilroy-Regular',
+    fontWeight: '400',
+    lineHeight: 20.48,
+    textAlign: 'left',
   },
   boldText: {
-    fontWeight: '600',
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontFamily: 'Gilroy-Bold',
+    fontWeight: '400',
+    lineHeight: 20.48,
+    textAlign: 'left',
   },
   stepsContainer: {
     marginTop: 32,
@@ -168,16 +188,18 @@ const styles = StyleSheet.create({
   },
   stepText: {
     color: '#FFFFFF',
-    fontSize: 20,
-    fontFamily: 'Gilroy-SemiBold',
+    fontSize: 14,
+    fontFamily: 'Gilroy-Medium',
     fontWeight: '400',
+    lineHeight: 17.92,
+    textAlign: 'left',
   },
   nextButton: {
     position: 'absolute',
     bottom: 34,
     left: 16,
     right: 16,
-    backgroundColor: '#00E6C3',
+    backgroundColor: '#6FDBD4',
     height: 56,
     borderRadius: 28,
     justifyContent: 'center',

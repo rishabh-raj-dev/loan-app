@@ -22,10 +22,12 @@ const PanConfirmationScreen: React.FC<Props> = ({ navigation, route }) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity
-          onPress={() => navigation.goBack()}
           style={styles.backButton}
+          onPress={() => navigation.goBack()}
         >
-          <Text style={styles.backButtonText}>←</Text>
+          <View style={styles.backButtonCircle}>
+            <Text style={styles.backButtonText}>‹</Text>
+          </View>
         </TouchableOpacity>
         <View style={styles.progressBarContainer}>
           <View style={styles.progressBar}>
@@ -41,7 +43,7 @@ const PanConfirmationScreen: React.FC<Props> = ({ navigation, route }) => {
         </View>
       </View>
 
-      <View style={styles.footer}>
+      <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={[styles.button, styles.noButton]}
           onPress={() => navigation.goBack()}
@@ -70,17 +72,27 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   backButton: {
+    marginTop: 27,
+    marginLeft: 16,
+    zIndex: 1,
+  },
+  backButtonCircle: {
     width: 40,
     height: 40,
     borderRadius: 20,
     backgroundColor: '#1A1A1A',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
   },
   backButtonText: {
     color: '#FFFFFF',
-    fontSize: 24,
+    fontSize: 28,
+    fontWeight: '300',
+    lineHeight: 28,
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    includeFontPadding: false,
+    paddingTop: 1,
   },
   progressBarContainer: {
     paddingHorizontal: 4,
@@ -88,6 +100,8 @@ const styles = StyleSheet.create({
   progressBar: {
     height: 4,
     backgroundColor: '#333333',
+    marginTop: 24,
+    marginHorizontal: 20,
     borderRadius: 2,
   },
   progressFill: {
@@ -95,8 +109,8 @@ const styles = StyleSheet.create({
     left: 0,
     top: 0,
     height: '100%',
-    width: '33%',
-    backgroundColor: '#6FE6CF',
+    width: '66%',
+    backgroundColor: '#6FDBD4',
     borderRadius: 2,
   },
   content: {
@@ -114,30 +128,36 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 4,
   },
-  footer: {
+  buttonContainer: {
+    position: 'absolute',
+    bottom: 34,
+    left: 16,
+    right: 16,
     flexDirection: 'row',
-    padding: 16,
+    justifyContent: 'space-between',
     gap: 12,
   },
   button: {
     flex: 1,
     height: 56,
     borderRadius: 28,
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
   },
   noButton: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#333333',
   },
   yesButton: {
-    backgroundColor: '#6FE6CF',
+    backgroundColor: '#6FDBD4',
   },
   buttonText: {
     fontSize: 16,
     fontWeight: '600',
+    fontFamily: 'Gilroy-SemiBold',
+    color: '#191919',
   },
   noButtonText: {
-    color: '#FF0000',
+    color: '#FFFFFF',
   },
   yesButtonText: {
     color: '#000000',

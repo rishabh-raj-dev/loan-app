@@ -1,86 +1,82 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   TextInput,
-  StatusBar,
-  KeyboardAvoidingView,
-  Platform,
+  SafeAreaView,
 } from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
-import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 type RootStackParamList = {
   PhoneNumber: undefined;
-  OtpVerification: {phoneNumber: string};
+  OtpVerification: { phoneNumber: string };
 };
 
-type PhoneNumberScreenProps = {
+type Props = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'PhoneNumber'>;
 };
 
-const PhoneNumberScreen: React.FC<PhoneNumberScreenProps> = ({navigation}) => {
+const PhoneNumberScreen: React.FC<Props> = ({ navigation }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
-
-  const handleNext = () => {
-    if (phoneNumber.length === 10) {
-      navigation.navigate('OtpVerification', {phoneNumber});
-    }
-  };
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#000000" />
-      
-      {/* Back Button */}
-      <TouchableOpacity style={styles.backButton}>
-        <Icon name="chevron-back" size={24} color="#FFFFFF" />
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}>
+        <View style={styles.backButtonCircle}>
+          <Text style={styles.backButtonText}>‹</Text>
+        </View>
       </TouchableOpacity>
 
-      {/* Progress Bar */}
       <View style={styles.progressBar}>
         <View style={styles.progressFill} />
       </View>
 
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.content}>
-        <View>
+      <View style={styles.content}>
+        <View style={styles.titleContainer}>
           <Text style={styles.title}>
-            What is your{'\n'}
-            <Text style={styles.highlightText}>phone number</Text>?
-          </Text>
-
-          <View style={styles.inputContainer}>
-            <Text style={styles.prefix}>+91</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="XXXXXXXXXX"
-              placeholderTextColor="#666666"
-              keyboardType="number-pad"
-              maxLength={10}
-              value={phoneNumber}
-              onChangeText={setPhoneNumber}
-            />
-          </View>
-
-          <Text style={styles.terms}>
-            By continuing, I agree to{' '}
-            <Text style={styles.link}>Privacy Policy</Text>,{' '}
-            <Text style={styles.link}>T&C</Text> and{' '}
-            <Text style={styles.link}>Credit Information</Text>
+            What is your{'\n'}phone <Text style={styles.highlightText}>number</Text>?
           </Text>
         </View>
-      </KeyboardAvoidingView>
 
-      {/* Next Button */}
+        <View style={styles.inputContainer}>
+          <View style={styles.phoneInputContainer}>
+            <Text style={styles.countryCode}>+91</Text>
+            <Text style={styles.separator}>|</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="7709988002"
+              placeholderTextColor="#666666"
+              value={phoneNumber}
+              onChangeText={setPhoneNumber}
+              keyboardType="phone-pad"
+              maxLength={10}
+            />
+          </View>
+          <View style={styles.underline} />
+        </View>
+
+        <Text style={styles.disclaimer}>
+          By continuing, I agree to{' '}
+          <Text style={styles.link}>Privacy Policy</Text>,{' '}
+          <Text style={styles.link}>T&C</Text> and{' '}
+          <Text style={styles.link}>Credit Information</Text>
+        </Text>
+      </View>
+
       <TouchableOpacity
-        style={[styles.nextButton, phoneNumber.length === 10 && styles.nextButtonActive]}
-        onPress={handleNext}
-        disabled={phoneNumber.length !== 10}>
+        style={[
+          styles.nextButton,
+          {
+            backgroundColor: phoneNumber.length === 10 ? '#6FDBD4' : '#6FDBD4',
+          },
+        ]}
+        disabled={phoneNumber.length !== 10}
+        onPress={() => navigation.navigate('OtpVerification', { phoneNumber })}>
         <Text style={styles.nextButtonText}>Next</Text>
       </TouchableOpacity>
     </SafeAreaView>
@@ -93,75 +89,116 @@ const styles = StyleSheet.create({
     backgroundColor: '#000000',
   },
   backButton: {
-    padding: 16,
+    marginTop: 27,
+    marginLeft: 16,
+    zIndex: 1,
+  },
+  backButtonCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#1A1A1A',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backButtonText: {
+    color: '#FFFFFF',
+    fontSize: 28,
+    fontWeight: '300',
+    lineHeight: 28,
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    includeFontPadding: false,
+    paddingTop: 1,
   },
   progressBar: {
-    height: 2,
+    height: 4,
     backgroundColor: '#333333',
-    marginHorizontal: 16,
+    marginTop: 24,
+    marginHorizontal: 20,
+    borderRadius: 2,
   },
   progressFill: {
-    width: '33%',
+    width: '25%',
     height: '100%',
-    backgroundColor: '#00E6C3',
+    backgroundColor: '#6FDBD4',
+    borderRadius: 2,
   },
   content: {
     flex: 1,
-    padding: 24,
-    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    marginTop: 40,
+  },
+  titleContainer: {
+    marginBottom: 60,
   },
   title: {
     fontSize: 32,
     color: '#FFFFFF',
-    marginTop: 24,
-    lineHeight: 40,
     fontWeight: '600',
+    lineHeight: 38,
+    fontFamily: 'Gilroy-SemiBold',
   },
   highlightText: {
-    color: '#00E6C3',
+    color: '#6FDBD4',
   },
   inputContainer: {
+    marginBottom: 24,
+  },
+  phoneInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 32,
-    borderBottomWidth: 1,
-    borderBottomColor: '#333333',
-    paddingBottom: 8,
+    marginBottom: 8,
   },
-  prefix: {
+  countryCode: {
     color: '#FFFFFF',
-    fontSize: 16,
-    marginRight: 8,
+    fontSize: 28,
+    fontFamily: 'Gilroy-Medium',
+    marginRight: 12,
+  },
+  separator: {
+    color: '#333333',
+    fontSize: 28,
+    marginRight: 12,
   },
   input: {
     flex: 1,
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: 28,
+    fontFamily: 'Gilroy-Medium',
     padding: 0,
   },
-  terms: {
-    color: '#666666',
-    fontSize: 12,
+  underline: {
+    height: 1,
+    backgroundColor: '#333333',
+    marginTop: 8,
+  },
+  disclaimer: {
+    color: '#999999',
+    fontSize: 14,
+    fontFamily: 'Gilroy-Medium',
+    lineHeight: 20,
     marginTop: 16,
-    lineHeight: 18,
   },
   link: {
-    color: '#FFFFFF',
+    color: '#6FDBD4',
+    textDecorationLine: 'underline',
   },
   nextButton: {
-    backgroundColor: '#333333',
-    margin: 16,
-    padding: 16,
-    borderRadius: 8,
+    position: 'absolute',
+    bottom: 34,
+    left: 16,
+    right: 16,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  nextButtonActive: {
-    backgroundColor: '#00E6C3',
-  },
   nextButtonText: {
-    color: '#FFFFFF',
+    color: '#191919',
     fontSize: 16,
     fontWeight: '600',
+    fontFamily: 'Gilroy-SemiBold',
   },
 });
 

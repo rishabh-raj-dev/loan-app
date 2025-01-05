@@ -75,7 +75,7 @@ const OtpVerificationScreen: React.FC<OtpVerificationScreenProps> = ({
         style={styles.backButton}
         onPress={() => navigation.goBack()}>
         <View style={styles.backButtonCircle}>
-          <Icon name="chevron-back" size={24} color="#FFFFFF" />
+          <Text style={styles.backButtonText}>‹</Text>
         </View>
       </TouchableOpacity>
 
@@ -131,8 +131,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#000000',
   },
   backButton: {
-    marginTop: 8,
+    marginTop: 27,
     marginLeft: 16,
+    zIndex: 1,
   },
   backButtonCircle: {
     width: 40,
@@ -142,16 +143,27 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  backButtonText: {
+    color: '#FFFFFF',
+    fontSize: 28,
+    fontWeight: '300',
+    lineHeight: 28,
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    includeFontPadding: false,
+    paddingTop: 1,
+  },
   progressBar: {
-    height: 2,
+    height: 4,
     backgroundColor: '#333333',
     marginTop: 24,
-    marginHorizontal: 16,
+    marginHorizontal: 20,
+    borderRadius: 2,
   },
   progressFill: {
     width: '33%',
     height: '100%',
-    backgroundColor: '#00E6C3',
+    backgroundColor: '#6FDBD4',
   },
   content: {
     padding: 24,
@@ -166,7 +178,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
   },
   highlightText: {
-    color: '#00E6C3',
+    color: '#6FDBD4',
     fontFamily: 'Gilroy-SemiBold',
     fontWeight: '400',
     fontSize: 28,
@@ -200,7 +212,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   resendText: {
-    color: '#666666',
+    color: '#6FDBD4',
     fontSize: 14,
     fontFamily: 'Gilroy-SemiBold',
   },
@@ -218,14 +230,14 @@ const styles = StyleSheet.create({
     bottom: 34,
     left: 16,
     right: 16,
-    backgroundColor: '#1A1A1A',
     height: 56,
+    backgroundColor: '#6FDBD4',
     borderRadius: 28,
     justifyContent: 'center',
     alignItems: 'center',
   },
   nextButtonActive: {
-    backgroundColor: '#00E6C3',
+    backgroundColor: '#6FDBD4',
   },
   nextButtonText: {
     color: '#FFFFFF',
