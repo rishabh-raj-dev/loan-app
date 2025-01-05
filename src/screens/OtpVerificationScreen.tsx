@@ -1,17 +1,20 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   TextInput,
+  SafeAreaView,
   StatusBar,
   Dimensions,
 } from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import type {RouteProp} from '@react-navigation/native';
+import {useDispatch} from 'react-redux';
+import {setCurrentStep, completeStep} from '../store/slices/progressSlice';
+import ProgressBar from '../components/ProgressBar';
 
 const {width} = Dimensions.get('window');
 
@@ -34,6 +37,7 @@ const OtpVerificationScreen: React.FC<OtpVerificationScreenProps> = ({
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [timer, setTimer] = useState(60); // 1:00 in seconds
   const inputRefs = useRef<Array<TextInput | null>>([]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -42,6 +46,10 @@ const OtpVerificationScreen: React.FC<OtpVerificationScreenProps> = ({
 
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    dispatch(setCurrentStep(2));
+  }, [dispatch]);
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -67,6 +75,11 @@ const OtpVerificationScreen: React.FC<OtpVerificationScreenProps> = ({
 
   const isOtpComplete = otp.every(digit => digit);
 
+  const handleVerify = () => {
+    dispatch(completeStep('fetchMutualFunds'));
+    navigation.navigate('PanVerification');
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#000000" />
@@ -79,9 +92,7 @@ const OtpVerificationScreen: React.FC<OtpVerificationScreenProps> = ({
         </View>
       </TouchableOpacity>
 
-      <View style={styles.progressBar}>
-        <View style={styles.progressFill} />
-      </View>
+      <ProgressBar style={styles.progressBar} />
 
       <View style={styles.content}>
         <Text style={styles.title}>
@@ -118,7 +129,7 @@ const OtpVerificationScreen: React.FC<OtpVerificationScreenProps> = ({
       <TouchableOpacity
         style={[styles.nextButton, isOtpComplete && styles.nextButtonActive]}
         disabled={!isOtpComplete}
-        onPress={() => navigation.navigate('PanVerification')}>
+        onPress={handleVerify}>
         <Text style={[styles.nextButtonText, isOtpComplete && styles.nextButtonTextActive]}>Next</Text>
       </TouchableOpacity>
     </SafeAreaView>
@@ -155,15 +166,9 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 4,
-    backgroundColor: '#333333',
     marginTop: 24,
     marginHorizontal: 20,
     borderRadius: 2,
-  },
-  progressFill: {
-    width: '33%',
-    height: '100%',
-    backgroundColor: '#6FDBD4',
   },
   content: {
     padding: 24,

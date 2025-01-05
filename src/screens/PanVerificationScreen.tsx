@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,9 +7,12 @@ import {
   TextInput,
   StatusBar,
 } from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
-import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCurrentStep, completeStep } from '../store/slices/progressSlice';
+import ProgressBar from '../components/ProgressBar';
 
 type RootStackParamList = {
   OtpVerification: undefined;
@@ -27,10 +30,24 @@ type PanVerificationScreenProps = {
 const PanVerificationScreen: React.FC<PanVerificationScreenProps> = ({
   navigation,
 }) => {
+  const dispatch = useDispatch();
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
 
   const isFormValid = firstName.trim() !== '' && lastName.trim() !== '';
+
+  useEffect(() => {
+    dispatch(setCurrentStep(3));
+  }, [dispatch]);
+
+  const handleContinue = () => {
+    dispatch(completeStep('kyc'));
+    navigation.navigate('PanConfirmation', {
+      name: `${firstName} ${lastName}`,
+      panNumber: '',
+    });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -44,9 +61,7 @@ const PanVerificationScreen: React.FC<PanVerificationScreenProps> = ({
         </View>
       </TouchableOpacity>
 
-      <View style={styles.progressBar}>
-        <View style={styles.progressFill} />
-      </View>
+      <ProgressBar style={styles.progressBar} />
 
       <View style={styles.content}>
         <View style={styles.titleContainer}>
@@ -85,12 +100,7 @@ const PanVerificationScreen: React.FC<PanVerificationScreenProps> = ({
           isFormValid && styles.continueButtonActive,
         ]}
         disabled={!isFormValid}
-        onPress={() =>
-          navigation.navigate('PanConfirmation', {
-            name: `${firstName} ${lastName}`,
-            panNumber: '',
-          })
-        }>
+        onPress={handleContinue}>
         <Text
           style={[
             styles.continueButtonText,
@@ -133,15 +143,9 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 4,
-    backgroundColor: '#333333',
     marginTop: 24,
     marginHorizontal: 20,
     borderRadius: 2,
-  },
-  progressFill: {
-    width: '33%',
-    height: '100%',
-    backgroundColor: '#6FDBD4',
   },
   content: {
     padding: 24,

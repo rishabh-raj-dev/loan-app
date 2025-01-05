@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,9 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useDispatch } from 'react-redux';
+import { setCurrentStep, completeStep } from '../store/slices/progressSlice';
+import ProgressBar from '../components/ProgressBar';
 
 type RootStackParamList = {
   PhoneNumber: undefined;
@@ -20,7 +23,17 @@ type Props = {
 };
 
 const PhoneNumberScreen: React.FC<Props> = ({ navigation }) => {
+  const dispatch = useDispatch();
   const [phoneNumber, setPhoneNumber] = useState('');
+
+  useEffect(() => {
+    dispatch(setCurrentStep(1));
+  }, [dispatch]);
+
+  const handleNext = () => {
+    dispatch(completeStep('phoneVerification'));
+    navigation.navigate('OtpVerification', { phoneNumber });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -32,9 +45,7 @@ const PhoneNumberScreen: React.FC<Props> = ({ navigation }) => {
         </View>
       </TouchableOpacity>
 
-      <View style={styles.progressBar}>
-        <View style={styles.progressFill} />
-      </View>
+      <ProgressBar style={styles.progressBar} />
 
       <View style={styles.content}>
         <View style={styles.titleContainer}>
@@ -76,7 +87,7 @@ const PhoneNumberScreen: React.FC<Props> = ({ navigation }) => {
           },
         ]}
         disabled={phoneNumber.length !== 10}
-        onPress={() => navigation.navigate('OtpVerification', { phoneNumber })}>
+        onPress={handleNext}>
         <Text style={styles.nextButtonText}>Next</Text>
       </TouchableOpacity>
     </SafeAreaView>
@@ -113,15 +124,8 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 4,
-    backgroundColor: '#333333',
     marginTop: 24,
     marginHorizontal: 20,
-    borderRadius: 2,
-  },
-  progressFill: {
-    width: '25%',
-    height: '100%',
-    backgroundColor: '#6FDBD4',
     borderRadius: 2,
   },
   content: {

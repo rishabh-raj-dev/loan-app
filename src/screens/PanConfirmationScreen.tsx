@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import PanCard from '../components/PanCard';
+import { useDispatch } from 'react-redux';
+import { setCurrentStep, completeStep } from '../store/slices/progressSlice';
+import ProgressBar from '../components/ProgressBar'; 
 
 type RootStackParamList = {
   PanVerification: undefined;
@@ -17,6 +20,16 @@ type Props = NativeStackScreenProps<RootStackParamList, 'PanConfirmation'>;
 
 const PanConfirmationScreen: React.FC<Props> = ({ navigation, route }) => {
   const { name, panNumber } = route.params;
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setCurrentStep(4));
+  }, [dispatch]);
+
+  const handleYes = () => {
+    dispatch(completeStep('pledgeMutualFunds'));
+    navigation.navigate('OtpVerification'); // Navigate to next screen (Bank Account)
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -30,9 +43,7 @@ const PanConfirmationScreen: React.FC<Props> = ({ navigation, route }) => {
           </View>
         </TouchableOpacity>
         <View style={styles.progressBarContainer}>
-          <View style={styles.progressBar}>
-            <View style={styles.progressFill} />
-          </View>
+          <ProgressBar style={styles.progressBar} />
         </View>
       </View>
 
@@ -52,7 +63,7 @@ const PanConfirmationScreen: React.FC<Props> = ({ navigation, route }) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.button, styles.yesButton]}
-          onPress={() => navigation.navigate('OtpVerification')}
+          onPress={handleYes}
         >
           <Text style={[styles.buttonText, styles.yesButtonText]}>Yes</Text>
         </TouchableOpacity>
@@ -102,15 +113,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#333333',
     marginTop: 24,
     marginHorizontal: 20,
-    borderRadius: 2,
-  },
-  progressFill: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    height: '100%',
-    width: '66%',
-    backgroundColor: '#6FDBD4',
     borderRadius: 2,
   },
   content: {

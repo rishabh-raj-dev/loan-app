@@ -7,7 +7,10 @@ import {
   StatusBar,
   SafeAreaView,
 } from 'react-native';
-import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import { useDispatch } from 'react-redux';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import ProgressBar from '../components/ProgressBar';
+import { setCurrentStep } from '../store/slices/progressSlice';
 
 type RootStackParamList = {
   Onboarding: undefined;
@@ -19,6 +22,8 @@ type OnboardingScreenProps = {
 };
 
 const OnboardingScreen: React.FC<OnboardingScreenProps> = ({navigation}) => {
+  const dispatch = useDispatch();
+  
   const steps = [
     'Mobile Number Verification',
     'Fetch Mutual Funds',
@@ -27,6 +32,11 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({navigation}) => {
     'Adding Bank Account',
     'E-Sign',
   ];
+
+  const handleNext = () => {
+    dispatch(setCurrentStep(1)); // Set to first step
+    navigation.navigate('PhoneNumber');
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -38,6 +48,8 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({navigation}) => {
           <Text style={styles.skipButton}>Skip</Text>
         </TouchableOpacity>
       </View>
+
+      <ProgressBar style={styles.progressBar} />
 
       <View style={styles.content}>
         <Text style={styles.title}>Sign up</Text>
@@ -67,7 +79,8 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({navigation}) => {
 
       <TouchableOpacity
         style={styles.nextButton}
-        onPress={() => navigation.navigate('PhoneNumber')}>
+        onPress={handleNext}
+      >
         <Text style={styles.nextButtonText}>Next</Text>
       </TouchableOpacity>
     </SafeAreaView>
@@ -78,6 +91,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#000000',
+  },
+  progressBar: {
+    marginHorizontal: 24,
+    marginVertical: 16,
   },
   header: {
     flexDirection: 'row',
