@@ -6,17 +6,19 @@ import {
   TouchableOpacity,
   TextInput,
   StatusBar,
-  KeyboardAvoidingView,
-  Platform,
+  Dimensions,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import type {RouteProp} from '@react-navigation/native';
 
+const {width} = Dimensions.get('window');
+
 type RootStackParamList = {
   PhoneNumber: undefined;
   OtpVerification: {phoneNumber: string};
+  PanVerification: undefined;
 };
 
 type OtpVerificationScreenProps = {
@@ -29,8 +31,8 @@ const OtpVerificationScreen: React.FC<OtpVerificationScreenProps> = ({
   route,
 }) => {
   const {phoneNumber} = route.params;
-  const [otp, setOtp] = useState(['', '', '', '']);
-  const [timer, setTimer] = useState(30);
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [timer, setTimer] = useState(60); // 1:00 in seconds
   const inputRefs = useRef<Array<TextInput | null>>([]);
 
   useEffect(() => {
@@ -41,13 +43,18 @@ const OtpVerificationScreen: React.FC<OtpVerificationScreenProps> = ({
     return () => clearInterval(interval);
   }, []);
 
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
   const handleOtpChange = (value: string, index: number) => {
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
 
-    // Move to next input
-    if (value && index < 3) {
+    if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
   };
@@ -58,80 +65,61 @@ const OtpVerificationScreen: React.FC<OtpVerificationScreenProps> = ({
     }
   };
 
-  const handleVerify = () => {
-    // In a real app, you would verify the OTP here
-    console.log('OTP:', otp.join(''));
-  };
-
-  const handleResend = () => {
-    if (timer === 0) {
-      setTimer(30);
-      // In a real app, you would make an API call to resend OTP
-    }
-  };
+  const isOtpComplete = otp.every(digit => digit);
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#000000" />
       
-      {/* Back Button */}
       <TouchableOpacity 
         style={styles.backButton}
         onPress={() => navigation.goBack()}>
-        <Icon name="chevron-back" size={24} color="#FFFFFF" />
+        <View style={styles.backButtonCircle}>
+          <Icon name="chevron-back" size={24} color="#FFFFFF" />
+        </View>
       </TouchableOpacity>
 
-      {/* Progress Bar */}
       <View style={styles.progressBar}>
         <View style={styles.progressFill} />
       </View>
 
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.content}>
-        <View>
-          <Text style={styles.title}>
-            Enter the{'\n'}
-            <Text style={styles.highlightText}>verification code</Text>
-          </Text>
+      <View style={styles.content}>
+        <Text style={styles.title}>
+          Enter your 6 digit <Text style={styles.highlightText}>OTP</Text>
+        </Text>
 
-          <Text style={styles.subtitle}>
-            We've sent a verification code to{'\n'}
-            +91 {phoneNumber}
-          </Text>
+        <View style={styles.otpContainer}>
+          {otp.map((digit, index) => (
+            <TextInput
+              key={index}
+              ref={(ref) => (inputRefs.current[index] = ref)}
+              style={[styles.otpInput, digit ? styles.otpInputFilled : null]}
+              maxLength={1}
+              keyboardType="number-pad"
+              value={digit}
+              onChangeText={(value) => handleOtpChange(value, index)}
+              onKeyPress={(e) => handleKeyPress(e, index)}
+            />
+          ))}
+        </View>
 
-          <View style={styles.otpContainer}>
-            {otp.map((digit, index) => (
-              <TextInput
-                key={index}
-                ref={(ref) => (inputRefs.current[index] = ref)}
-                style={styles.otpInput}
-                maxLength={1}
-                keyboardType="number-pad"
-                value={digit}
-                onChangeText={(value) => handleOtpChange(value, index)}
-                onKeyPress={(e) => handleKeyPress(e, index)}
-              />
-            ))}
-          </View>
-
+        <View style={styles.resendContainer}>
+          <Text style={styles.resendText}>Didn't get an OTP?</Text>
           <TouchableOpacity 
             style={styles.resendButton} 
-            onPress={handleResend}
             disabled={timer > 0}>
-            <Text style={[styles.resendText, timer > 0 && styles.resendTextDisabled]}>
-              Resend OTP {timer > 0 ? `(${timer}s)` : ''}
+            <Text style={styles.resendOtpText}>
+              Resend OTP ({formatTime(timer)})
             </Text>
           </TouchableOpacity>
         </View>
-      </KeyboardAvoidingView>
+      </View>
 
-      {/* Verify Button */}
       <TouchableOpacity
-        style={[styles.verifyButton, otp.every(digit => digit) && styles.verifyButtonActive]}
-        onPress={handleVerify}
-        disabled={!otp.every(digit => digit)}>
-        <Text style={styles.verifyButtonText}>Verify</Text>
+        style={[styles.nextButton, isOtpComplete && styles.nextButtonActive]}
+        disabled={!isOtpComplete}
+        onPress={() => navigation.navigate('PanVerification')}>
+        <Text style={[styles.nextButtonText, isOtpComplete && styles.nextButtonTextActive]}>Next</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -143,79 +131,110 @@ const styles = StyleSheet.create({
     backgroundColor: '#000000',
   },
   backButton: {
-    padding: 16,
+    marginTop: 8,
+    marginLeft: 16,
+  },
+  backButtonCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#1A1A1A',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   progressBar: {
     height: 2,
     backgroundColor: '#333333',
+    marginTop: 24,
     marginHorizontal: 16,
   },
   progressFill: {
-    width: '66%',
+    width: '33%',
     height: '100%',
     backgroundColor: '#00E6C3',
   },
   content: {
-    flex: 1,
     padding: 24,
   },
   title: {
-    fontSize: 32,
+    fontSize: 28,
     color: '#FFFFFF',
     marginTop: 24,
-    lineHeight: 40,
-    fontWeight: '600',
+    fontFamily: 'Gilroy-SemiBold',
+    fontWeight: '400',
+    lineHeight: 36,
+    textAlign: 'left',
   },
   highlightText: {
     color: '#00E6C3',
-  },
-  subtitle: {
-    color: '#666666',
-    fontSize: 14,
-    marginTop: 16,
-    lineHeight: 20,
+    fontFamily: 'Gilroy-SemiBold',
+    fontWeight: '400',
+    fontSize: 28,
+    lineHeight: 36,
   },
   otpContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 32,
+    marginTop: 40,
+    marginBottom: 24,
   },
   otpInput: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
-    backgroundColor: '#1A1A1A',
+    width: (width - 48 - 50) / 6,
+    height: 56,
+    backgroundColor: 'transparent',
+    borderBottomWidth: 1,
+    borderBottomColor: '#333333',
     color: '#FFFFFF',
-    fontSize: 24,
+    fontSize: 32,
     textAlign: 'center',
-    borderWidth: 1,
-    borderColor: '#333333',
+    fontWeight: '600',
+    fontFamily: 'Gilroy-SemiBold',
   },
-  resendButton: {
-    marginTop: 24,
-    alignSelf: 'center',
+  otpInputFilled: {
+    borderBottomColor: '#FFFFFF',
+  },
+  resendContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 16,
   },
   resendText: {
-    color: '#00E6C3',
-    fontSize: 14,
-  },
-  resendTextDisabled: {
     color: '#666666',
+    fontSize: 14,
+    fontFamily: 'Gilroy-SemiBold',
   },
-  verifyButton: {
-    backgroundColor: '#333333',
-    margin: 16,
-    padding: 16,
-    borderRadius: 8,
+  resendButton: {
+    flexDirection: 'row',
     alignItems: 'center',
   },
-  verifyButtonActive: {
+  resendOtpText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontFamily: 'Gilroy-SemiBold',
+  },
+  nextButton: {
+    position: 'absolute',
+    bottom: 34,
+    left: 16,
+    right: 16,
+    backgroundColor: '#1A1A1A',
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  nextButtonActive: {
     backgroundColor: '#00E6C3',
   },
-  verifyButtonText: {
+  nextButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
+    fontFamily: 'Gilroy-SemiBold',
+  },
+  nextButtonTextActive: {
+    color: '#000000',
   },
 });
 
