@@ -7,10 +7,7 @@ import {
   StatusBar,
   SafeAreaView,
 } from 'react-native';
-import { useDispatch } from 'react-redux';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import ProgressBar from '../components/ProgressBar';
-import { setCurrentStep } from '../store/slices/progressSlice';
 
 type RootStackParamList = {
   Onboarding: undefined;
@@ -22,19 +19,7 @@ type OnboardingScreenProps = {
 };
 
 const OnboardingScreen: React.FC<OnboardingScreenProps> = ({navigation}) => {
-  const dispatch = useDispatch();
-  
-  const steps = [
-    'Mobile Number Verification',
-    'Fetch Mutual Funds',
-    'KYC',
-    'Pledge Mutual Funds',
-    'Adding Bank Account',
-    'E-Sign',
-  ];
-
   const handleNext = () => {
-    dispatch(setCurrentStep(1)); // Set to first step
     navigation.navigate('PhoneNumber');
   };
 
@@ -48,8 +33,6 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({navigation}) => {
           <Text style={styles.skipButton}>Skip</Text>
         </TouchableOpacity>
       </View>
-
-      <ProgressBar style={styles.progressBar} />
 
       <View style={styles.content}>
         <Text style={styles.title}>Sign up</Text>
@@ -66,7 +49,14 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({navigation}) => {
         </View>
 
         <View style={styles.stepsContainer}>
-          {steps.map((step, index) => (
+          {[
+            'Mobile Number Verification',
+            'Fetch Mutual Funds',
+            'KYC',
+            'Pledge Mutual Funds',
+            'Adding Bank Account',
+            'E-Sign',
+          ].map((step, index) => (
             <View key={index} style={styles.stepRow}>
               <View style={styles.stepNumber}>
                 <Text style={styles.stepNumberText}>{index + 1}</Text>
@@ -91,10 +81,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#000000',
-  },
-  progressBar: {
-    marginHorizontal: 24,
-    marginVertical: 16,
   },
   header: {
     flexDirection: 'row',

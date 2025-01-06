@@ -7,7 +7,6 @@ import {
   TextInput,
   SafeAreaView,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useDispatch } from 'react-redux';
 import { setCurrentStep, completeStep } from '../store/slices/progressSlice';
@@ -125,7 +124,8 @@ const styles = StyleSheet.create({
   progressBar: {
     height: 4,
     marginTop: 24,
-    marginHorizontal: 20,
+    marginLeft: 20,
+    marginRight: 20,
     borderRadius: 2,
   },
   content: {

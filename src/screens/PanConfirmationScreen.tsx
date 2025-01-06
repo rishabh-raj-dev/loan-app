@@ -77,12 +77,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000000',
   },
-  header: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 16,
-  },
-  backButton: {
+
+   backButton: {
     marginTop: 27,
     marginLeft: 16,
     zIndex: 1,
@@ -92,8 +88,8 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     backgroundColor: '#1A1A1A',
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
   },
   backButtonText: {
     color: '#FFFFFF',
@@ -105,14 +101,11 @@ const styles = StyleSheet.create({
     includeFontPadding: false,
     paddingTop: 1,
   },
-  progressBarContainer: {
-    paddingHorizontal: 4,
-  },
   progressBar: {
     height: 4,
-    backgroundColor: '#333333',
     marginTop: 24,
-    marginHorizontal: 20,
+    marginLeft: 20,
+    marginRight: 20,
     borderRadius: 2,
   },
   content: {
